@@ -14,6 +14,7 @@ class Page:
     title = ac.reader("_title")
 
     ext = wiki("settings.yml")
+    c_d = {}
 
     def __init__(self, params):
         """
@@ -39,7 +40,11 @@ class Page:
 
     # private methods
     def __get_cates(self):
-        return self.ext.categories(self.page_id)
+        try:
+            return self.c_d[self.page_id]
+        except KeyError:
+            self.c_d[self.page_id] = self.ext.categories(self.page_id)
+            return self.c_d[self.page_id]
 
     @classmethod
     def from_json(cls, params):
@@ -56,6 +61,7 @@ class Article(Page):
     infobox = ac.reader("_infobox")
     keywords = ac.writer("_keywords")
 
+    c_d = {}
     df = {}
 
     def __init__(self, params):
@@ -68,7 +74,7 @@ class Article(Page):
     def to_json(self):
         attrs = {}
         for attr in self.__dict__.items():
-            if attr[0][1:] in ["page_id", "title", "infobox", "secs"]:
+            if attr[0][1:] in ["page_id", "title", "infobox", "secs", "tf", "keywords"]:
                 attrs[attr[0][1:]] = attr[1]
         return json.dumps(attrs, ensure_ascii=False, sort_keys=True)
 

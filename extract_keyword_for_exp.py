@@ -40,11 +40,15 @@ if __name__ == "__main__":
         print(a.title)
         a.calc_tf()
 
+    out_data = []
     for a in articles:
         a.extract_key(len(articles))
-        a.save()
+        js = a.to_json()
+        out_data.append(js)
         print("{}: {}".format(a.title, a.keywords))
 
+    out = open("db/json/top_5_keyed_article_20180601.json","w")
+    json.dump(out_data, out, ensure_ascii=False)
 
 
     result = true_rate(articles)
