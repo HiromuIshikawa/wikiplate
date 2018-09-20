@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from backend.models.page import Article, Category
 import pandas as pd
-import matplotlib.pyplot as plt
 import numpy as np
 import yaml
 import json

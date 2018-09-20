@@ -95,7 +95,7 @@ class Article(Page):
         try:
             target = params["target"]
         except KeyError:
-            target = []
+            target = ""
 
         self._secs = params["secs"]
         self._infobox = params["infobox"]
@@ -122,7 +122,7 @@ class Article(Page):
         self._target = all_targets
 
     def calc_tf(self):
-        if len(self._target) == 0:
+        if self._target == "":
             self.get_target()
         else:
             self._target = [Category(c) for c in self._target]
