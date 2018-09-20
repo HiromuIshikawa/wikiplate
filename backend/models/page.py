@@ -70,6 +70,10 @@ class Article(Page):
     secs = ac.reader("_secs")
     infobox = ac.reader("_infobox")
     keywords = ac.writer("_keywords")
+    tf = ac.reader("_tf")
+    tfidf = ac.reader("_tfidf")
+    target = ac.reader("_target")
+
 
     c_d = {}
     df = {}
@@ -80,6 +84,10 @@ class Article(Page):
             tf = params["tf"]
         except KeyError:
             tf = {}
+        try:
+            tfidf = params["tfidf"]
+        except KeyError:
+            tfidf = {}
         try:
             keys = params["keywords"]
         except KeyError:
@@ -92,13 +100,14 @@ class Article(Page):
         self._secs = params["secs"]
         self._infobox = params["infobox"]
         self._tf = tf
+        self._tfidf = tfidf
         self._keywords = keys
         self._target = target
 
     def to_json(self):
         attrs = {}
         for attr in self.__dict__.items():
-            if attr[0][1:] in ["page_id", "title", "infobox", "secs", "tf", "keywords"]:
+            if attr[0][1:] in ["page_id", "title", "infobox", "secs", "tf", "tfidf", "keywords"]:
                 attrs[attr[0][1:]] = attr[1]
             if attr[0][1:] == "cates":
                 attrs[attr[0][1:]] = attr[1].to_dict(orient='records')
@@ -134,7 +143,8 @@ class Article(Page):
             tfidf[w[0]] = self.__tfidf(w[1], self.df[w[0]], pages_n)
 
         sorted_tfidf = sorted(tfidf.items(), key=lambda x: -x[1])
-        self._keywords = [w[0] for w in sorted_tfidf[:5]]
+        self._tfidf = tfidf
+        self._keywords = [w[0] for w in sorted_tfidf]
 
     def __tfidf(self, TF, DF, N):
         return TF * log( N / DF )
