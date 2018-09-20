@@ -5,6 +5,7 @@ import json
 import MeCab
 import collections
 from math import log
+import pandas as pd
 
 class Page:
     """
@@ -20,19 +21,29 @@ class Page:
         """
         param: dictionary of page info
         """
+
         self._page_id = params["page_id"]
         self._title = params["title"]
-        self._cates = self.__get_cates()
+
+        try:
+            cates = pd.DataFrame.from_dict(params["cates"])
+        except KeyError:
+            cates = []
+
+        self._cates = cates
 
     def to_json(self):
         attrs = {}
         for attr in self.__dict__.items():
-            if attr[0][1:] in ["page_id", "title"]:
+            if attr[0][1:] in ["page_id", "title", "cates"]:
                 attrs[attr[0][1:]] = attr[1]
         return json.dumps(attrs, ensure_ascii=False, sort_keys=True)
 
     def categories(self):
         cates = []
+        if len(self._cates) == 0:
+            self._cates = self.__get_cates()
+
         for i, cate in self._cates.iterrows():
             c = Category({"page_id":cate["page_id"], "title":cate["page_title"], "src": [self.page_id]})
             cates.append(c)
@@ -48,7 +59,6 @@ class Page:
 
     @classmethod
     def from_json(cls, params):
-        print(params)
         return cls(json.loads(params))
 
 
@@ -66,24 +76,49 @@ class Article(Page):
 
     def __init__(self, params):
         super().__init__(params)
+        try:
+            tf = params["tf"]
+        except KeyError:
+            tf = {}
+        try:
+            keys = params["keywords"]
+        except KeyError:
+            keys = []
+        try:
+            target = params["target"]
+        except KeyError:
+            target = []
+
         self._secs = params["secs"]
         self._infobox = params["infobox"]
-        self._tf = {}
-        self._keywords = [""]
+        self._tf = tf
+        self._keywords = keys
+        self._target = target
 
     def to_json(self):
         attrs = {}
         for attr in self.__dict__.items():
             if attr[0][1:] in ["page_id", "title", "infobox", "secs", "tf", "keywords"]:
                 attrs[attr[0][1:]] = attr[1]
+            if attr[0][1:] == "cates":
+                attrs[attr[0][1:]] = attr[1].to_dict(orient='records')
+            if attr[0][1:] == "target":
+                attrs[attr[0][1:]] = [{"title":c.title, "page_id":c.page_id} for c in attr[1]]
         return json.dumps(attrs, ensure_ascii=False, sort_keys=True)
 
-    def calc_tf(self):
+    def get_target(self):
         l_1 = self.categories()
         l_2 = [cate for sub in [c.categories() for c in l_1] for cate in sub]
         all_targets = l_1 + l_2
+        self._target = all_targets
 
-        candidates = [c.last_word for c in all_targets]
+    def calc_tf(self):
+        if len(self._target) == 0:
+            self.get_target()
+        else:
+            self._target = [Category(c) for c in self._target]
+
+        candidates = [c.last_word() for c in self._target]
         counted = collections.Counter(candidates)
         tf = [(w[0], w[1]/len(candidates)) for w in counted.most_common()] # 頻出単語順に並べすべてをキーワードとして抽出
         for w in tf:
@@ -119,11 +154,12 @@ class Category(Page):
     """
     A subclass of Page for Wikipedia category
     """
-    last_word = ac.reader("_last_word")
 
     def __init__(self, params):
         super().__init__(params)
-        self._last_word = self.__word_l()
+
+    def last_word(self):
+        return self.__word_l()
 
     def __word_l(self):
         """
