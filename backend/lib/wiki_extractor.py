@@ -90,7 +90,7 @@ class WikiExtractor:
         sql = """
                 INSERT INTO article (page_id, title, infobox, keywords)
                 VALUES ({}, {}, {}, '{}' );
-        """.format(page_id, title, infobox, str(keywords).replace("'",'"'))
+        """.format(page_id, title, infobox, str(keywords).replace("'",'"').replace('""",', ''))
         cur = self.conn.cursor()
 
         try:
@@ -99,7 +99,7 @@ class WikiExtractor:
         except:
             print(sql)
             self.conn.rollback()
-            raise
+
 
     def articles_from_keys(self, keys):
 
