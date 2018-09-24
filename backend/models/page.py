@@ -57,6 +57,10 @@ class Page:
             self.c_d[self.page_id] = self.ext.categories(self.page_id)
             return self.c_d[self.page_id]
 
+    def info(self):
+        print("page_id: {}".format(self._page_id))
+        print("title:   {}".format(self._title))
+
     @classmethod
     def from_json(cls, params):
         return cls(json.loads(params))

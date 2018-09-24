@@ -115,5 +115,19 @@ class WikiExtractor:
 
         return df_read
 
+    def article_from_id(self, page_id):
+
+        sql = """
+                SELECT * FROM article
+                WHERE page_id={}
+        """.format(page_id)
+
+        try:
+            df_read = pd.read_sql(sql, self.conn)
+            return df_read
+        except:
+            print(sql)
+            self.conn.rollback()
+
     def close(self):
         self.conn.close()
