@@ -77,8 +77,10 @@ class Article(Page):
     tf = ac.reader("_tf")
     tfidf = ac.reader("_tfidf")
     target = ac.reader("_target")
+    filtered = ac.reader("_filtered")
 
-
+    tfidf_d = pd.read_json(open("db/json/pro_all_tfidf_20180601.json", "r+"))
+    alpha = 0.5
     c_d = {}
     df = {}
 
@@ -91,7 +93,7 @@ class Article(Page):
         try:
             tfidf = params["tfidf"]
         except KeyError:
-            tfidf = {}
+            tfidf = self.tfidf_d[self.tfidf_d["page_id"] == self.page_id].iloc[0].tiidf
         try:
             keys = params["keywords"]
         except KeyError:
@@ -106,6 +108,7 @@ class Article(Page):
         self._tf = tf
         self._tfidf = tfidf
         self._keywords = keys
+        self._filtered = self.filtered_keys()
         self._target = target
 
     def to_json(self):
@@ -149,6 +152,14 @@ class Article(Page):
         sorted_tfidf = sorted(tfidf.items(), key=lambda x: -x[1])
         self._tfidf = tfidf
         self._keywords = [w[0] for w in sorted_tfidf]
+
+    def filtered_keys(self):
+        keys = []
+        for key, value in self.tfidf.items():
+            if value >= self.alpha:
+                keys.append(key)
+
+        return keys
 
     def __tfidf(self, TF, DF, N):
         return TF * log( N / DF )

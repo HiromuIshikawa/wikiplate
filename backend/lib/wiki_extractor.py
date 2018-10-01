@@ -100,12 +100,24 @@ class WikiExtractor:
             print(sql)
             self.conn.rollback()
 
-
-    def articles_from_keys(self, keys):
+    def articles_from_keys_or(self, keys):
 
         query = """JSON_CONTAINS(keywords, '"{}"')""".format(keys[0])
         for key in keys[1:]:
             query += """ OR JSON_CONTAINS(keywords, '"{}"')""".format(key)
+        sql = """
+                SELECT * FROM article
+                WHERE {};
+        """.format(query)
+
+        df_read = pd.read_sql(sql, self.conn)
+
+        return df_read
+
+    def articles_from_keys(self, keys):
+
+        query = "JSON_CONTAINS(keywords, *{}*)".format(keys)
+        query = query.replace("'",'"').replace("*","'")
         sql = """
                 SELECT * FROM article
                 WHERE {};
