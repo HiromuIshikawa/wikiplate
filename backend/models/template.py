@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from ..lib.wiki_extractor import WikiExtractor as wiki
-from .models.page import Article
+from .page import Article, Infobox
 from ..lib import accessor as ac
 from collections import Counter
 
@@ -26,7 +26,6 @@ class Template:
     def select_similar(self):
         df = self.ext.articles_from_keys(self.keys)
         candidates = [Article.from_df(row) for i, row in df.iterrows()]
-        print(len(candidates))
         similars = [a for a in candidates if self.__judge_key(a)]
         self._similars = similars
         print("{} similars are extracted".format(len(self._similars)))
@@ -34,10 +33,14 @@ class Template:
     def reccomended_infobox(self):
         infobox_candidates = [a.infobox for a in self._similars]
         counted_infobox = Counter(infobox_candidates)
-        print(counted_infobox)
+        common_infobox_id = counted_infobox.most_common(1)[0][0]
+        infobox_df = self.ext.page(common_infobox_id).iloc[0]
+        self._infobox.append(Infobox({"page_id": infobox_df.page_id, "title": infobox_df.page_title}))
+        print("Infobox: '{}' is recommended.".format(self._infobox[0].title))
 
     def to_wiki(self):
         pass
 
     def __judge_key(self, a): # 入力されたキーワードの全てが，閾値以上の特徴語に含まれるかを判断
+        print(a.filtered)
         return list(set(self._keys) & set(a.filtered)).sort() == self.keys.sort()

@@ -216,11 +216,14 @@ class Infobox(Page):
 
     def __init__(self, params):
         super().__init__(params)
+        try:
+            arg = params["arg"]
+        except KeyError:
+            arg = []
+        self._arg = arg # arguments for create infobox
 
-        self._arg = params["arg"] # arguments for create infobox
-
-    def to_html(self):
+    def to_wiki(self):
         """
-        Output html template
+        Output wiki template
         """
         html = "\{\{{}\}\}".format(self.title)
