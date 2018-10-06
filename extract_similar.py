@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from backend.templa.templa import Templa
+from backend.models.template import Template
 import pandas as pd
 import numpy as np
 import sys
@@ -8,9 +8,7 @@ if __name__ == "__main__":
 
     params = sys.argv
     keys = params[1].split(",")
-    templa = Templa()
+    template = Template({"title":"test_article", "keys":keys})
 
-    similars = templa.select_similar(keys)
-    for a in similars:
-        print("title: {} => infobox: {}".format(a.title, a.infobox))
-        print("keys = {}".format(a.keywords))
+    template.select_similar()
+    template.reccomended_infobox()
