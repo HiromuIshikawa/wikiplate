@@ -71,7 +71,7 @@ class Article(Page):
     """
     A subclass of Page for Wikipedia articles
     """
-    secs = ac.reader("_secs")
+    secs = ac.writer("_secs")
     infobox = ac.reader("_infobox")
     keywords = ac.writer("_keywords")
     tf = ac.reader("_tf")
@@ -79,7 +79,6 @@ class Article(Page):
     target = ac.reader("_target")
     filtered = ac.reader("_filtered")
 
-    tfidf_d = pd.read_json(open("db/json/pro_all_tfidf_20180601.json", "r+"))
     alpha = 0.5
     c_d = {}
     df = {}
@@ -103,7 +102,7 @@ class Article(Page):
         except KeyError:
             target = ""
 
-        self._secs = params["secs"]
+        self._secs = []
         self._infobox = params["infobox"]
         self._tf = tf
         self._tfidf = tfidf
@@ -169,10 +168,18 @@ class Article(Page):
 
     @classmethod
     def from_df(cls, df):
-        params = {"page_id":df.page_id, "title":df.title, "infobox":df.infobox, "secs":[]}
+        params = {"page_id":df.page_id, "title":df.title, "infobox":df.infobox}
         a = cls(params)
-        a.keywords = df.keywords
+        a.keywords = eval(df.keywords)
+        try:
+            a.secs = eval(df.sections)
+        except TypeError:
+            a.secs = []
         return a
+
+    @classmethod
+    def read_tfidf(cls):
+        cls.tfidf_d = pd.read_json(open("db/json/pro_all_tfidf_20180601.json", "r+"))
 
 
 class Category(Page):

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from ..lib.wiki_extractor import WikiExtractor as wiki
 from .page import Article, Infobox
+from .sections_graph import SectionsGraph as sg
 from ..lib import accessor as ac
 from collections import Counter
 
@@ -30,17 +31,22 @@ class Template:
         self._similars = similars
         print("{} similars are extracted".format(len(self._similars)))
 
-    def reccomended_infobox(self):
+    def recommended_infobox(self):
         infobox_candidates = [a.infobox for a in self._similars]
         counted_infobox = Counter(infobox_candidates)
         common_infobox_id = counted_infobox.most_common(1)[0][0]
         infobox_df = self.ext.page(common_infobox_id).iloc[0]
         self._infobox.append(Infobox({"page_id": infobox_df.page_id, "title": infobox_df.page_title}))
-        print("Infobox: '{}' is recommended.".format(self._infobox[0].title))
+
+    def recommended_sections(self):
+        graph = sg()
+        for a in self._similars:
+            graph.add_sections(a.secs)
+        graph.create_djacency()
+        self._secs = graph.dijkstra_path()
 
     def to_wiki(self):
         pass
 
     def __judge_key(self, a): # 入力されたキーワードの全てが，閾値以上の特徴語に含まれるかを判断
-        print(a.filtered)
         return list(set(self._keys) & set(a.filtered)).sort() == self.keys.sort()
