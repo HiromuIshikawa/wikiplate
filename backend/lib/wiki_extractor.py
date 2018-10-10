@@ -100,6 +100,34 @@ class WikiExtractor:
             print(sql)
             self.conn.rollback()
 
+    def add_sections(self, page_id, sections):
+        """
+        Add data into sectios column
+        """
+
+        sql = """
+                UPDATE article SET sections='{}'
+                WHERE page_id={};
+        """.format(str(sections).replace("'",'"').replace('""",', ''), page_id)
+
+        cur = self.conn.cursor()
+
+        try:
+            cur.execute(sql)
+            self.conn.commit()
+        except:
+            print(sql)
+            self.conn.rollback()
+
+    def articles(self):
+
+        sql = """
+                SELECT page_id FROM article
+        """
+
+        df_read = pd.read_sql(sql, self.conn)
+        return df_read
+
     def articles_from_keys_or(self, keys):
 
         query = """JSON_CONTAINS(keywords, '"{}"')""".format(keys[0])
