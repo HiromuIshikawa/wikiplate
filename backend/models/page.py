@@ -202,28 +202,34 @@ class Category(Page):
         """
         Return tokens of category
         """
-        a = Analyzer(token_filters=[CompoundNounFilter(),POSKeepFilter(['名詞'])])
-        words = [token.surface for token in a.analyze(self._title)]
+        # janome version
+        # a = Analyzer(token_filters=[CompoundNounFilter(),POSKeepFilter(['名詞'])])
+        # words = [token.surface for token in a.analyze(self._title)]
+        # if words:
+        #     return words[-1]
+        # else:
+        #     return ""
+        m = MeCab.Tagger('mecabrc')
+        m.parseToNode('')
+
+        words =  [token for token in self.__tokenize(m)]
         if words:
             return words[-1]
         else:
             return ""
-    #     m = MeCab.Tagger('mecabrc')
-    #     m.parseToNode('')
 
-    #     words =  [token for token in self.__tokenize(m)]
-    #     if words:
-    #         return words[-1]
-    #     else:
-    #         return ""
-
-    # # private method
-    # def __tokenize(self, m):
-    #     node = m.parseToNode(self._title)
-    #     while node:
-    #         if node.feature.split(',')[0] == '名詞':
-    #             yield node.surface.lower()
-    #         node = node.next
+    # private method
+    def __tokenize(self, m):
+        node = m.parseToNode(self._title)
+        compound = ""
+        while node:
+            if node.feature.split(',')[0] == '名詞':
+                compound += node.surface.lower()
+            else:
+                if compound != "":
+                    yield compound
+                    compound = ""
+            node = node.next
 
 
 class Infobox(Page):
