@@ -14,16 +14,16 @@ if __name__ == "__main__":
     print(len(articles_json))
     articles = [Article.from_json(json) for json in articles_json]
 
-    for a in articles:
-        print(a.title)
+    for i, a in enumerate(articles):
+        print(i, ": ", a.title)
         a.calc_tf()
 
     out_data = []
-    for a in articles:
+    for i, a in enumerate(articles):
         a.extract_key(len(articles))
         js = a.to_json()
         out_data.append(js)
-        print("{}: {}".format(a.title, a.keywords))
+        print("{}: {}".format(i, a.keywords))
 
     out = open("db/json/pro_keyed_article_compound_20180601.json","w")
     json.dump(out_data, out, ensure_ascii=False)
