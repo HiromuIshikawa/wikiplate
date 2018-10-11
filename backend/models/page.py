@@ -3,6 +3,10 @@ from ..lib import accessor as ac
 from ..lib.wiki_extractor import WikiExtractor as wiki
 import json
 import MeCab
+from janome.tokenizer import Tokenizer
+from janome.analyzer import Analyzer
+from janome.charfilter import *
+from janome.tokenfilter import *
 import collections
 from math import log
 import pandas as pd
@@ -92,7 +96,8 @@ class Article(Page):
         try:
             tfidf = params["tfidf"]
         except KeyError:
-            tfidf = self.tfidf_d[self.tfidf_d["page_id"] == self.page_id].iloc[0].tiidf
+            # tfidf = self.tfidf_d[self.tfidf_d["page_id"] == self.page_id].iloc[0].tiidf
+            tfidf = {}
         try:
             keys = params["keywords"]
         except KeyError:
@@ -197,22 +202,28 @@ class Category(Page):
         """
         Return tokens of category
         """
-        m = MeCab.Tagger('mecabrc')
-        m.parseToNode('')
-
-        words =  [token for token in self.__tokenize(m)]
+        a = Analyzer(token_filters=[CompoundNounFilter(),POSKeepFilter(['名詞'])])
+        words = [token.surface for token in a.analyze(self._title)]
         if words:
             return words[-1]
         else:
             return ""
+    #     m = MeCab.Tagger('mecabrc')
+    #     m.parseToNode('')
 
-    # private method
-    def __tokenize(self, m):
-        node = m.parseToNode(self._title)
-        while node:
-            if node.feature.split(',')[0] == '名詞':
-                yield node.surface.lower()
-            node = node.next
+    #     words =  [token for token in self.__tokenize(m)]
+    #     if words:
+    #         return words[-1]
+    #     else:
+    #         return ""
+
+    # # private method
+    # def __tokenize(self, m):
+    #     node = m.parseToNode(self._title)
+    #     while node:
+    #         if node.feature.split(',')[0] == '名詞':
+    #             yield node.surface.lower()
+    #         node = node.next
 
 
 class Infobox(Page):

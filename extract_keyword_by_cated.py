@@ -25,7 +25,7 @@ if __name__ == "__main__":
         out_data.append(js)
         print("{}: {}".format(a.title, a.keywords))
 
-    out = open("db/json/pro_keyed_article_20180601.json","w")
+    out = open("db/json/pro_keyed_article_compound_20180601.json","w")
     json.dump(out_data, out, ensure_ascii=False)
 
     out.close()
