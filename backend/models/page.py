@@ -10,6 +10,7 @@ from janome.tokenfilter import *
 import collections
 from math import log
 import pandas as pd
+import functools
 
 class Page:
     """
@@ -82,7 +83,7 @@ class Article(Page):
     tfidf = ac.reader("_tfidf")
     target = ac.reader("_target")
     filtered = ac.reader("_filtered")
-
+    tfidf_d = pd.DataFrame()
     alpha = 0.5
     c_d = {}
     df = {}
@@ -96,8 +97,7 @@ class Article(Page):
         try:
             tfidf = params["tfidf"]
         except KeyError:
-            # tfidf = self.tfidf_d[self.tfidf_d["page_id"] == self.page_id].iloc[0].tiidf
-            tfidf = {}
+            tfidf = self.tfidf_all[self.tfidf_all["page_id"] == self.page_id].iloc[0].tiidf
         try:
             keys = params["keywords"]
         except KeyError:
@@ -183,9 +183,34 @@ class Article(Page):
         return a
 
     @classmethod
-    def read_tfidf(cls):
-        cls.tfidf_d = pd.read_json(open("db/json/pro_all_tfidf_20180601.json", "r+"))
+    def from_keys(cls, keys):
+        if cls.tfidf_d.empty:
+            cls.read_tfidf()
 
+        d = cls.tfidf_d
+        target_ids = []
+        ##### When use filtered tfidf file, use bellow code
+        target_ids = list(functools.reduce(lambda x, y: x & y, [set(d[d[0] == key].page_id.values) for key in keys]))
+        ##### When use not filtered tfidf file by alpha(>= 0.5), use bellow code
+        # for i, row in d.iterrows():
+        #     if row.tiidf.keys() >= set(keys):
+        #         if functools.reduce(lambda x, y: x and y, [row.tiidf[key] >= cls.alpha for key in keys]):
+        #             target_ids.append(row.page_id)
+        if target_ids:
+            similars_df = cls.ext.articles_from_ids(target_ids)
+            return [cls.from_df(df) for i, df in similars_df.iterrows()]
+        else:
+            return False
+
+    @classmethod
+    def read_tfidf(cls):
+        src = open("db/json/pro_all_tfidf_compound_over_alpha_20180601.json", "r+")
+        src_all = open("db/json/pro_all_tfidf_compound_20180601.json", "r+")
+        js = json.load(src)
+        src.close()
+        cls.tfidf_d = pd.io.json.json_normalize(js,'tiidf',['page_id'])
+        cls.tfidf_all = pd.read_json(src_all)
+        print("read tfidf and keywords dictionary.")
 
 class Category(Page):
     """

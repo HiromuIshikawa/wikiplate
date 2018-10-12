@@ -24,14 +24,25 @@ class Template:
         self._infobox = []
         self._similars = []
 
-    def select_similar(self):
-        df = self.ext.articles_from_keys(self.keys)
-        candidates = [Article.from_df(row) for i, row in df.iterrows()]
-        similars = [a for a in candidates if self.__judge_key(a)]
-        self._similars = similars
-        print("{} similars are extracted".format(len(self._similars)))
+    # When get articles by not compound keys, use bellow code
+    # def select_similar(self):
+    #     df = self.ext.articles_from_keys(self.keys)
+    #     candidates = [Article.from_df(row) for i, row in df.iterrows()]
+    #     similars = [a for a in candidates if self.__judge_key(a)]
+    #     self._similars = similars
+    #     print("{} similars are extracted".format(len(self._similars)))
 
-    def recommended_infobox(self):
+    def select_similar(self):
+        similars = Article.from_keys(self.keys)
+        if similars:
+            self._similars = similars
+            print("{} similars are extracted".format(len(self._similars)))
+            return True
+        else:
+            print("Not found articles matching to keywords")
+            return False
+
+    def recommended_infobox(self): # TODO: get params of infobox by using wikipedia api client
         infobox_candidates = [a.infobox for a in self._similars]
         counted_infobox = Counter(infobox_candidates)
         common_infobox_id = counted_infobox.most_common(1)[0][0]
