@@ -155,12 +155,13 @@ class WikiExtractor:
 
         return df_read
 
-    def article_from_id(self, page_id):
+    def articles_from_ids(self, page_ids):
+        query = ','.join(map(lambda x: str(x), page_ids))
 
         sql = """
                 SELECT * FROM article
-                WHERE page_id={}
-        """.format(page_id)
+                WHERE page_id IN ({})
+        """.format(query)
 
         try:
             df_read = pd.read_sql(sql, self.conn)
