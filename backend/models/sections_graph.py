@@ -13,6 +13,7 @@ class SectionsGraph:
 
     def __init__(self):
         self._nodes = ["_s","_e"]
+        self._nodes_w = [1,1]
         self._edges = []
         self._djacency = []
 
@@ -22,9 +23,11 @@ class SectionsGraph:
         for section in secs:
             try:
                 dest = self._nodes.index(section)
+                self._nodes_w[dest] += 1
             except ValueError:
                 dest = len(self._nodes) -1
                 self._nodes.insert(dest, section)
+                self._nodes_w.insert(dest, 1)
 
             self._edges.append((src, dest))
             src = dest
@@ -44,6 +47,7 @@ class SectionsGraph:
         V = np.array(range(size))
         prev = np.empty(size)
         d = np.zeros(size)
+        d[0] = 1 # For use node weight.
         d[1:] = np.inf
         u = 0
         Q = V
@@ -56,8 +60,8 @@ class SectionsGraph:
                     du = d[n]
             Q = Q[~(Q == u)]
             for v in np.where(self._djacency[u] != 0.0)[0]:
-                if(d[v] > (d[u] + 1/self._djacency[u,v])):
-                    d[v] = d[u] + 1/self._djacency[u,v]
+                if(d[v] > (d[u] + 1/self._djacency[u,v] + 1/self._nodes_w[v])):
+                    d[v] = d[u] + 1/self._djacency[u,v] + 1/self._nodes_w[v]
                     prev[v] = u
 
         sections = []
