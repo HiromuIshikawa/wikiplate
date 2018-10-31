@@ -15,11 +15,24 @@ if __name__ == "__main__":
             print("bye...")
             break
         else:
-            keys = line.split(",")
+            params = line.split(":")
+            keys = params[0].split(",")
             template = Template({"title":"test_article", "keys":keys})
 
             if template.select_similar():
+
                 template.recommended_infobox()
                 print("Infobox: '{}'".format(template.infobox[0].title))
                 template.recommended_sections()
                 print("Section: {}".format(template.secs))
+                try:
+                    if params[1] == "title":
+                        for p in template.similars:
+                            print(p.title)
+                    elif params[1] == "sections":
+                        for p in template.similars:
+                            print(p.secs)
+                    elif params[1] == "wiki":
+                        print(template.to_wiki())
+                except:
+                    pass
