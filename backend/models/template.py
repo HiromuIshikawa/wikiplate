@@ -52,12 +52,18 @@ class Template:
     def recommended_sections(self):
         graph = sg()
         for a in self._similars:
+            # print(a.title, ":", a.secs)
             graph.add_sections(a.secs)
         graph.create_djacency()
         self._secs = graph.dijkstra_path()
 
     def to_wiki(self):
-        pass
+        sections = ""
+        for sec in self._secs:
+            sections = sections + "== {} ==\n\n".format(sec)
+
+        info_wiki = self._infobox[0].to_wiki()
+        return info_wiki + sections
 
     def __judge_key(self, a): # 入力されたキーワードの全てが，閾値以上の特徴語に含まれるかを判断
         return list(set(self._keys) & set(a.filtered)).sort() == self.keys.sort()

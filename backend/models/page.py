@@ -3,10 +3,10 @@ from ..lib import accessor as ac
 from ..lib.wiki_extractor import WikiExtractor as wiki
 import json
 import MeCab
-from janome.tokenizer import Tokenizer
-from janome.analyzer import Analyzer
-from janome.charfilter import *
-from janome.tokenfilter import *
+# from janome.tokenizer import Tokenizer
+# from janome.analyzer import Analyzer
+# from janome.charfilter import *
+# from janome.tokenfilter import *
 import collections
 from math import log
 import pandas as pd
@@ -204,7 +204,7 @@ class Article(Page):
 
     @classmethod
     def read_tfidf(cls):
-        src = open("db/json/pro_all_tfidf_compound_over_alpha_20180601.json", "r+")
+        src = open("db/json/pro_all_tfidf_compound_over_01_20180601.json", "r+") # 閾値ごとにファイルがわれている．ex) over_01 -> α>=0.1
         src_all = open("db/json/pro_all_tfidf_compound_20180601.json", "r+")
         js = json.load(src)
         src.close()
@@ -275,4 +275,4 @@ class Infobox(Page):
         """
         Output wiki template
         """
-        html = "\{\{{}\}\}".format(self.title)
+        return "{{" + " {} ".format(self._title) + "}}\n\n"
