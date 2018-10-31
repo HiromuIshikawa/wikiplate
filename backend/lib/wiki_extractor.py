@@ -170,5 +170,20 @@ class WikiExtractor:
             print(sql)
             self.conn.rollback()
 
+    def articles_from_titles(self, titles):
+        query = ','.join(map(lambda x: "'" + x + "'", titles))
+
+        sql = """
+                SELECT * FROM article
+                WHERE title IN ({})
+        """.format(query)
+
+        try:
+            df_read = pd.read_sql(sql, self.conn)
+            return df_read
+        except:
+            print(sql)
+            self.conn.rollback()
+
     def close(self):
         self.conn.close()
