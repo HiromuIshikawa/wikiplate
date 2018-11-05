@@ -269,10 +269,23 @@ class Infobox(Page):
             arg = params["arg"]
         except KeyError:
             arg = []
+
+        try:
+            url = params["url"]
+        except KeyError:
+            url = ""
+
         self._arg = arg # arguments for create infobox
+        self._url = url
 
     def to_wiki(self):
         """
         Output wiki template
         """
-        return "{{" + " {} ".format(self._title) + "}}\n\n"
+        wiki =  "{{" + " {} ".format(self._title) + "\n"
+        for a in self._arg:
+            wiki += "|{} = \n".format(a)
+
+        wiki += "}}\n\n"
+
+        return wiki

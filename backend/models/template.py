@@ -4,6 +4,8 @@ from .page import Article, Infobox
 from .sections_graph import SectionsGraph as sg
 from ..lib import accessor as ac
 from collections import Counter
+import wikipedia as wk
+import re
 
 class Template:
     """
@@ -21,7 +23,7 @@ class Template:
         self._title = params["title"]
         self._keys = params["keys"]
         self._secs = []
-        self._infobox = []
+        self._infobox = ""
         self._similars = []
 
     # When get articles by not compound keys, use bellow code
@@ -35,7 +37,13 @@ class Template:
     def select_similar(self):
         similars = Article.from_keys(self.keys)
         if similars:
-            self._similars = similars
+            similars = [s for s in similars if len(s.secs) > 4] # 質の低い(章項目の少ない)記事による，章構成への影響をなくすため．5以上の条件は感覚で決めたもの．
+            if len(similars) > 0:
+                self._similars = similars
+            else:
+                print("Not found articles matching to keywords")
+                return False
+
             print("{} similars are extracted".format(len(self._similars)))
             return True
         else:
@@ -44,10 +52,17 @@ class Template:
 
     def recommended_infobox(self): # TODO: get params of infobox by using wikipedia api client
         infobox_candidates = [a.infobox for a in self._similars]
-        counted_infobox = Counter(infobox_candidates)
-        common_infobox_id = counted_infobox.most_common(1)[0][0]
-        infobox_df = self.ext.page(common_infobox_id).iloc[0]
-        self._infobox.append(Infobox({"page_id": infobox_df.page_id, "title": infobox_df.page_title}))
+        counted_infobox = Counter(infobox_candidates).most_common()
+        ib_df = ""
+        arg = []
+        for ib in counted_infobox:
+            ib_df = self.ext.page(ib[0]).iloc[0]
+            arg = self.__get_args(ib_df.page_title)
+            if arg:
+                break
+
+        url = "https://ja.wikipedia.org/wiki/Template:" + ib_df.page_title
+        self._infobox = (Infobox({"page_id": ib_df.page_id, "title": ib_df.page_title, "arg": arg, "url": url}))
 
     def recommended_sections(self):
         graph = sg()
@@ -62,8 +77,25 @@ class Template:
         for sec in self._secs:
             sections = sections + "== {} ==\n\n".format(sec)
 
-        info_wiki = self._infobox[0].to_wiki()
+        info_wiki = self._infobox.to_wiki()
         return info_wiki + sections
+
+    def __get_args(self, title):
+        wk.set_lang("ja")
+        query = "Template:" + title + "/doc"
+        try:
+            page = wk.page(query)
+        except:
+            print("not found doc page for {}".format(title))
+            return False
+
+        print(title)
+        usage = page.section("使い方")
+        if not usage:
+            usage = page.section("使用法")
+
+        arg = re.findall('\|(.+) *=', usage)
+        return arg
 
     def __judge_key(self, a): # 入力されたキーワードの全てが，閾値以上の特徴語に含まれるかを判断
         return list(set(self._keys) & set(a.filtered)).sort() == self.keys.sort()
