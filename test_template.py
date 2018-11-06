@@ -22,7 +22,7 @@ if __name__ == "__main__":
             if template.select_similar():
 
                 template.recommended_infobox()
-                print("Infobox: '{}'".format(template.infobox[0].title))
+                print("Infobox: '{}'".format(template.infobox.title))
                 template.recommended_sections()
                 print("Section: {}".format(template.secs))
                 try:
