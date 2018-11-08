@@ -39,6 +39,7 @@ export default {
   }
   body {
     background-color: whitesmoke;
+    font-size: 18px;
     height: 100%;
   }
   #app {
