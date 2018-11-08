@@ -23,10 +23,10 @@ export default {
   }
 
   .sidebar-item:hover {
-    background-color: darkgray;
+    background-color: rgb(91, 91, 91);
   }
 
   .router-link-active {
-    background-color: darkgray;
+    background-color: rgb(91,91,91);
   }
 </style>
