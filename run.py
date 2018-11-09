@@ -2,12 +2,14 @@
 from backend.models.template import Template
 from backend.models.page import Article
 from flask import Flask, render_template, request, jsonify, make_response
+from flask_cors import CORS, cross_origin
 
 app = Flask(__name__,
             static_folder = "./dist/static",
             template_folder = "./dist")
+CORS(app)
 
-template = Template({"title":"", "keys":""})
+template = ""
 
 @app.route('/api/template', methods=['GET'])
 def get_template():
@@ -20,6 +22,7 @@ def get_template():
 
     if 'keywords' in params:
         keys = params.get('keywords').split(":")
+        print(keys)
     if 'title' in params:
         title = params.get('title')
     template = Template({"title":title, "keys":keys})
@@ -37,7 +40,7 @@ def get_template():
 def get_similars():
     global template
     response = {}
-    response['similars'] = [{'title': s.title, 'infobox': template.ib_title(s.infobox), 'sections': template.secs} for s in template.similars]
+    response['similars'] = [{'title': s.title, 'infobox': template.ib_title(s.infobox), 'sections': s.secs} for s in template.similars]
     return make_response(jsonify(response))
 
 @app.route('/', defaults={'path': ''})
