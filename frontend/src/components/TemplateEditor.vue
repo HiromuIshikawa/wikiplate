@@ -2,7 +2,7 @@
   <div class="template">
     <h1>記事テンプレート</h1>
     <b-row class="template-row">
-      <b-col class="template-info" cols="12" sm="6">
+      <b-col class="template-info" cols="12" sm="4">
         <p><b>記事名:</b> {{ sharedTemplate.title }}</p>
         <p><b>Infobox:</b> <a :href="url" target="_blank">{{ sharedTemplate.infobox.title }}</a></p>
         <p><b>章構成:</b></p>
@@ -10,7 +10,7 @@
           <div v-for="(section, index) in sharedTemplate.sections" :key="section">{{index+1}}. {{section}}</div>
         </div>
       </b-col>
-      <b-col class="wiki-template" cols="12" sm="6">
+      <b-col class="wiki-template" cols="12" sm="8">
         <p><b>wikiテンプレート:</b></p>
         <textarea v-model="sharedTemplate.wiki" name="wiki"></textarea>
       </b-col>
@@ -44,7 +44,7 @@ export default {
     height: 90%;
   }
   .section-table {
-    margin-right: 30%;
+    margin-right: 0;
     padding: 0.5em 1em;
     border: solid 2px #888;
     border-radius: 10px;
