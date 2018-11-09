@@ -7,13 +7,16 @@ app = Flask(__name__,
             static_folder = "./dist/static",
             template_folder = "./dist")
 
-@app.route("/api/template", methods=['GET'])
+template = Template({"title":"", "keys":""})
+
+@app.route('/api/template', methods=['GET'])
 def get_template():
     # URLパラメータ
     params = request.args
     response = {}
     keys = []
     title = ""
+    global template
 
     if 'keywords' in params:
         keys = params.get('keywords').split(":")
@@ -24,7 +27,17 @@ def get_template():
         template.recommended_infobox()
         template.recommended_sections()
 
-    response["wiki"] = template.to_wiki()
+    response['title'] = template.title
+    response['infobox'] = template.infobox.to_dict()
+    response['sections'] = template.secs
+    response['wiki'] = template.to_wiki()
+    return make_response(jsonify(response))
+
+@app.route('/api/similars', methods=['GET'])
+def get_similars():
+    global template
+    response = {}
+    response['similars'] = [{'title': s.title, 'infobox': template.ib_title(s.infobox), 'sections': template.secs} for s in template.similars]
     return make_response(jsonify(response))
 
 @app.route('/', defaults={'path': ''})

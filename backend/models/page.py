@@ -278,6 +278,9 @@ class Infobox(Page):
         self._arg = arg # arguments for create infobox
         self._url = url
 
+    def to_dict(self):
+        return {'title': self._title, 'arg': self._arg, 'url': self._url}
+
     def to_wiki(self):
         """
         Output wiki template

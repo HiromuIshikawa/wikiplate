@@ -17,12 +17,14 @@ class Template:
     keys = ac.reader("_keys")
     secs = ac.reader("_secs")
     infobox = ac.reader("_infobox")
+    ib_candidate = ac.reader("_ib_candidate")
     similars = ac.reader("_similars")
 
     def __init__(self, params):
         self._title = params["title"]
         self._keys = params["keys"]
         self._secs = []
+        self._ib_candidate = []
         self._infobox = ""
         self._similars = []
 
@@ -53,16 +55,22 @@ class Template:
     def recommended_infobox(self): # TODO: get params of infobox by using wikipedia api client
         infobox_candidates = [a.infobox for a in self._similars]
         counted_infobox = Counter(infobox_candidates).most_common()
-        ib_df = ""
         arg = []
         for ib in counted_infobox:
             ib_df = self.ext.page(ib[0]).iloc[0]
-            arg = self.__get_args(ib_df.page_title)
+            self._ib_candidate.append({'page_id': ib_df.page_id, 'title': ib_df.page_title})
+
+        index = 0
+        for (i,ib) in enumerate(self._ib_candidate):
+            print(ib)
+            arg = self.__get_args(ib['title'])
             if arg:
+                index = i
                 break
 
-        url = "https://ja.wikipedia.org/wiki/Template:" + ib_df.page_title
-        self._infobox = (Infobox({"page_id": ib_df.page_id, "title": ib_df.page_title, "arg": arg, "url": url}))
+        selected = self._ib_candidate[index]
+        url = "https://ja.wikipedia.org/wiki/Template:" + selected['title']
+        self._infobox = (Infobox({"page_id": selected['page_id'], "title": selected['title'], "arg": arg, "url": url}))
 
     def recommended_sections(self):
         graph = sg()
@@ -71,6 +79,13 @@ class Template:
             graph.add_sections(a.secs)
         graph.create_djacency()
         self._secs = graph.dijkstra_path()
+
+    def ib_title(self, page_id):
+        for ib in self._ib_candidate:
+            if page_id == ib['page_id']:
+                return ib['title']
+
+        return 'unknown'
 
     def to_wiki(self):
         sections = ""
