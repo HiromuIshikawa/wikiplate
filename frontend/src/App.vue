@@ -18,6 +18,8 @@ import store from '@/store'
 import SideBar from '@/components/SideBar'
 import NavBar from '@/components/NavBar'
 import SyncLoader from 'vue-spinner/src/SyncLoader'
+import 'normalize.css'
+
 export default {
   name: 'App',
   components: {
@@ -53,6 +55,7 @@ export default {
   }
   #app {
     height: 100%;
+    background-color: whitesmoke;
   }
   .main-container {
     background-color: white;
@@ -61,15 +64,17 @@ export default {
   .main-row {
     height: 100%;
   }
-  .sidebar-col {
+  div.sidebar-col {
     padding: 0;
     height: 100%;
     background-color: gray;
+    box-shadow: 2px 0px 3px gray;
   }
-  .main-content-col {
+  div.main-content-col {
+    padding-top: 5px;
     height: 100%;
   }
-  .loading-col {
+  div.loading-col {
     height: 100%;
     background-color: #eee;
   }

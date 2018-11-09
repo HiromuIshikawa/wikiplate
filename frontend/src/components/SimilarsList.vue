@@ -12,7 +12,7 @@
         {{ sharedSimilars.length }} 件の類似記事が抽出されました．
       </template>
     </b-table>
-    <b-pagination align="center" size="sm" :total-rows="sharedSimilars.length" :per-page="perPage" v-model="currentPage">
+    <b-pagination class="pagination" align="center" size="sm" :total-rows="sharedSimilars.length" :per-page="perPage" v-model="currentPage">
     </b-pagination>
   </div>
 </template>
