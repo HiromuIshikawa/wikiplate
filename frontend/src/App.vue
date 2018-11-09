@@ -4,7 +4,8 @@
     <b-container class="main-container">
       <b-row class="main-row">
         <b-col class="sidebar-col" cols="12" sm="2"><side-bar/></b-col>
-        <b-col class="main-content-col" cols="12" sm="10"><router-view/></b-col>
+        <b-col v-if="sharedState.loading" class="loading-col" cols="12" sm = "2"></b-col>
+        <b-col v-else class="main-content-col" cols="12" sm="10"><router-view/></b-col>
       </b-row>
     </b-container>
   </div>
@@ -53,7 +54,7 @@ export default {
     height: 100%;
   }
   .sidebar-col {
-    padding: 0px;
+    padding: 0;
     height: 100%;
     background-color: gray;
   }

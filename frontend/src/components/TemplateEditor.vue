@@ -4,7 +4,7 @@
     <b-row class="template-row">
       <b-col class="template-info" cols="12" sm="6">
         <p><b>記事名:</b> {{ sharedTemplate.title }}</p>
-        <p><b>Infobox:</b> <a :href="url" target="_blank">{{ sharedTemplate.infobox }}</a></p>
+        <p><b>Infobox:</b> <a :href="url" target="_blank">{{ sharedTemplate.infobox.title }}</a></p>
         <p><b>章構成:</b></p>
         <div class="section-table">
           <div v-for="(section, index) in sharedTemplate.sections" :key="section">{{index+1}}. {{section}}</div>
@@ -29,7 +29,7 @@ export default {
   },
   computed: {
     url: function () {
-      return 'https://ja.wikipedia.org/wiki/Template:' + this.sharedTemplate.infobox
+      return this.sharedTemplate.infobox.url
     }
   }
 }

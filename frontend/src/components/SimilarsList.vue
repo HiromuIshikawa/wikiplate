@@ -12,7 +12,7 @@
         {{ sharedSimilars.length }} 件の類似記事が抽出されました．
       </template>
     </b-table>
-    <b-pagination align="center" size="sm" :total-rows="sharedSimilars.length" :per-page="10" v-model="currentPage">
+    <b-pagination align="center" size="sm" :total-rows="sharedSimilars.length" :per-page="perPage" v-model="currentPage">
     </b-pagination>
   </div>
 </template>
@@ -25,7 +25,7 @@ export default {
     return {
       sharedSimilars: store.state.similars,
       currentPage: 1,
-      perPage: 10,
+      perPage: 6,
       fields: [
         {key: 'title', label: '記事名', sortable: true},
         {key: 'infobox', label: 'Infobox', sortable: true},
