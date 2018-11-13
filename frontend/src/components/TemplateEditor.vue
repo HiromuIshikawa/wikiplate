@@ -6,7 +6,7 @@
         <p><b>記事名:</b> {{ sharedTemplate.title }}</p>
         <p><b>Infobox:</b> <a :href="url" target="_blank">{{ sharedTemplate.infobox.title }}</a></p>
         <p><b>章構成:</b></p>
-        <div class="section-table">
+        <div v-show="sectionFlag" class="section-table">
           <div v-for="(section, index) in sharedTemplate.sections" :key="section">{{index+1}}. {{section}}</div>
         </div>
       </b-col>
@@ -30,6 +30,13 @@ export default {
   computed: {
     url: function () {
       return this.sharedTemplate.infobox.url
+    },
+    sectionFlag: function () {
+      if (this.sharedTemplate.sections.length > 0) {
+        return true
+      } else {
+        return false
+      }
     }
   }
 }
@@ -46,12 +53,13 @@ export default {
   .section-table {
     margin-right: 0;
     padding: 0.5em 1em;
-    border: solid 2px #888;
+    border: solid 1px #888;
+    background-color: rgb(248, 249, 250);
     border-radius: 10px;
   }
   textarea {
     width: 100%;
     height: 90%;
-    border: solid 2px #888;
+    border: solid 1px #888;
   }
 </style>

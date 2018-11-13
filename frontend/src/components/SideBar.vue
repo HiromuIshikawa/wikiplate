@@ -16,10 +16,12 @@ export default {
   .sidebar-item {
     background-color: gray;
     padding-left: 12%;
-    padding-top: 0.5%;
+    padding-top: 2%;
+    padding-bottom: 2%;
     font-size: 20px;
     color: white;
     cursor: pointer;
+    transition: background-color 0.3s;
   }
 
   .sidebar-item:hover {

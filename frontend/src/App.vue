@@ -64,19 +64,27 @@ export default {
   .main-row {
     height: 100%;
   }
+  .navbar {
+    box-shadow: 0px 0px 5px #444;
+    z-index: 3;
+  }
   div.sidebar-col {
     padding: 0;
     height: 100%;
     background-color: gray;
-    box-shadow: 2px 0px 3px gray;
+    box-shadow: 0px 0px 5px #444;
+    z-index: 2;
   }
   div.main-content-col {
     padding-top: 5px;
     height: 100%;
+    box-shadow: 0px 0px 5px #444;
+    z-index: 1;
   }
   div.loading-col {
     height: 100%;
-    background-color: #eee;
+    box-shadow: 0px 0px 5px #444;
+    z-index: 1;
   }
   .main-content-col h1 {
     color: #666;
