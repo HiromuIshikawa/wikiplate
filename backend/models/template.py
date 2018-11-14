@@ -60,15 +60,12 @@ class Template:
             ib_df = self.ext.page(ib[0]).iloc[0]
             self._ib_candidate.append({'page_id': ib_df.page_id, 'title': ib_df.page_title})
 
-        index = 0
-        for (i,ib) in enumerate(self._ib_candidate):
-            print(ib)
-            arg = self.__get_args(ib['title'])
-            if arg:
-                index = i
-                break
+        # for (i,ib) in enumerate(self._ib_candidate):
+        #     print(ib)
+        #     arg = self.__get_args(ib['title'])
 
-        selected = self._ib_candidate[index]
+        selected = self._ib_candidate[0]
+        arg = self.__get_args(selected['title'])
         url = "https://ja.wikipedia.org/wiki/Template:" + selected['title']
         self._infobox = (Infobox({"page_id": selected['page_id'], "title": selected['title'], "arg": arg, "url": url}))
 
@@ -102,15 +99,18 @@ class Template:
             page = wk.page(query)
         except:
             print("not found doc page for {}".format(title))
-            return False
+            return []
 
         print(title)
         usage = page.section("使い方")
         if not usage:
             usage = page.section("使用法")
-
-        arg = re.findall('\|(.+) *=', usage)
-        return arg
+        if not usage:
+            usage = page.section('コード')
+        if usage:
+            arg = re.findall('\|(.+) *=', usage)
+            return arg
+        return []
 
     def __judge_key(self, a): # 入力されたキーワードの全てが，閾値以上の特徴語に含まれるかを判断
         return list(set(self._keys) & set(a.filtered)).sort() == self.keys.sort()

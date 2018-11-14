@@ -14,12 +14,12 @@ const state = {
     wiki: ''
   },
   similars: [],
-  loading: false
+  loading: false,
+  message: ''
 }
 
 const actions = {
   async getTemplate (title, keywords) {
-    // TODO: Get Tempalate from Flask server
     state.loading = true
     const resTemplate = await axios.get(apiEndpoint + '/template', {
       params: {
@@ -27,12 +27,28 @@ const actions = {
         keywords: keywords
       }
     }).catch(() => { console.log('template error') })
-    const resSimilars = await axios.get(apiEndpoint + '/similars').catch(() => { console.log('similars error') })
-    const template = resTemplate.data
-    const similars = resSimilars.data.similars
-
-    state.template = Object.assign({}, template)
-    state.similars = Object.assign([], similars)
+    if (resTemplate.data.result === 'Success') {
+      state.message = ''
+      const resSimilars = await axios.get(apiEndpoint + '/similars').catch(() => { console.log('similars error') })
+      const template = resTemplate.data
+      const similars = resSimilars.data.similars
+      state.template = Object.assign({}, template)
+      state.similars = Object.assign([], similars)
+    } else {
+      state.message = '類似記事が抽出できませんでした．'
+      state.template = {
+        title: '',
+        infobox: {
+          title: '',
+          infobox: '',
+          arg: [],
+          url: ''
+        },
+        sections: [],
+        wiki: ''
+      }
+      state.similars = []
+    }
     state.loading = false
   }
 }

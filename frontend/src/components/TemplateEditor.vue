@@ -1,6 +1,7 @@
 <template>
   <div class="template">
     <h1>記事テンプレート</h1>
+    <p class="message" v-if="messageFlag">{{ state.message }}</p>
     <b-row class="template-row">
       <b-col class="template-info" cols="12" sm="4">
         <p><b>記事名:</b> {{ sharedTemplate.title }}</p>
@@ -24,6 +25,7 @@ export default {
   name: 'TemplateEditor',
   data () {
     return {
+      state: store.state,
       sharedTemplate: store.state.template
     }
   },
@@ -33,6 +35,13 @@ export default {
     },
     sectionFlag: function () {
       if (this.sharedTemplate.sections.length > 0) {
+        return true
+      } else {
+        return false
+      }
+    },
+    messageFlag: function () {
+      if (this.state.message.length > 0) {
         return true
       } else {
         return false
@@ -61,5 +70,8 @@ export default {
     width: 100%;
     height: 90%;
     border: solid 1px #888;
+  }
+  p.message {
+    color: red;
   }
 </style>

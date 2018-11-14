@@ -30,10 +30,13 @@ def get_template():
         template.recommended_infobox()
         template.recommended_sections()
 
-    response['title'] = template.title
-    response['infobox'] = template.infobox.to_dict()
-    response['sections'] = template.secs
-    response['wiki'] = template.to_wiki()
+        response['result'] = 'Success'
+        response['title'] = template.title
+        response['infobox'] = template.infobox.to_dict()
+        response['sections'] = template.secs
+        response['wiki'] = template.to_wiki()
+    else:
+        response['result'] = 'Not found articles matching to keywords'
     return make_response(jsonify(response))
 
 @app.route('/api/similars', methods=['GET'])
