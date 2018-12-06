@@ -4,7 +4,6 @@
     <p class="message" v-if="messageFlag">{{ state.message }}</p>
     <b-row class="template-row">
       <b-col class="template-info" cols="12" sm="4">
-        <p><b>記事名:</b> {{ sharedTemplate.title }}</p>
         <p><b>Infobox:</b> <a :href="url" target="_blank">{{ sharedTemplate.infobox.title }}</a></p>
         <p><b>章構成:</b></p>
         <div v-show="sectionFlag" class="section-table">

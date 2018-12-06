@@ -17,21 +17,17 @@ def get_template():
     params = request.args
     response = {}
     keys = []
-    title = ""
     global template
 
     if 'keywords' in params:
         keys = params.get('keywords').split(":")
         print(keys)
-    if 'title' in params:
-        title = params.get('title')
-    template = Template({"title":title, "keys":keys})
+    template = Template({"keys":keys})
     if template.select_similar():
         template.recommended_infobox()
         template.recommended_sections()
 
         response['result'] = 'Success'
-        response['title'] = template.title
         response['infobox'] = template.infobox.to_dict()
         response['sections'] = template.secs
         response['wiki'] = template.to_wiki()

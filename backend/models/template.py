@@ -13,7 +13,6 @@ class Template:
     """
     ext = wiki("settings.yml")
 
-    title = ac.reader("_title")
     keys = ac.reader("_keys")
     secs = ac.reader("_secs")
     infobox = ac.reader("_infobox")
@@ -21,7 +20,6 @@ class Template:
     similars = ac.reader("_similars")
 
     def __init__(self, params):
-        self._title = params["title"]
         self._keys = params["keys"]
         self._secs = []
         self._ib_candidate = []

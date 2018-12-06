@@ -3,7 +3,6 @@ const apiEndpoint = 'http://localhost:5000/api'
 
 const state = {
   template: {
-    title: '',
     infobox: {
       title: '',
       infobox: '',
@@ -19,11 +18,10 @@ const state = {
 }
 
 const actions = {
-  async getTemplate (title, keywords) {
+  async getTemplate (keywords) {
     state.loading = true
     const resTemplate = await axios.get(apiEndpoint + '/template', {
       params: {
-        title: title,
         keywords: keywords
       }
     }).catch(() => { console.log('template error') })
@@ -37,7 +35,6 @@ const actions = {
     } else {
       state.message = '類似記事が抽出できませんでした．'
       state.template = {
-        title: '',
         infobox: {
           title: '',
           infobox: '',

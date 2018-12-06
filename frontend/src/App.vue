@@ -37,8 +37,8 @@ export default {
     }
   },
   methods: {
-    create (title, keywords) {
-      store.actions.getTemplate(title, keywords)
+    create (keywords) {
+      store.actions.getTemplate(keywords)
     }
   }
 }
