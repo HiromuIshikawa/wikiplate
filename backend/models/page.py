@@ -204,7 +204,7 @@ class Article(Page):
 
     @classmethod
     def read_tfidf(cls):
-        src = open("db/json/pro_all_tfidf_compound_over_01_20180601.json", "r+") # 閾値ごとにファイルがわれている．ex) over_01 -> α>=0.1
+        src = open("db/json/pro_all_tfidf_compound_over_24_20180601.json", "r+") # 閾値ごとにファイルがわれている．ex) over_01 -> α>=0.1
         src_all = open("db/json/pro_all_tfidf_compound_20180601.json", "r+")
         js = json.load(src)
         src.close()
