@@ -2,7 +2,7 @@
   <b-navbar toggleable="md" type="dark" variant="info">
       <b-navbar-toggle target="nav_collapse"></b-navbar-toggle>
       <router-link :to="{name:'Template'}">
-        <b-navbar-brand tag="h1">Templa</b-navbar-brand>
+        <b-navbar-brand tag="h1">Wikiplate</b-navbar-brand>
       </router-link>
   <b-collapse is-nav id="nav_collapse">
     <!-- Right aligned nav items -->
