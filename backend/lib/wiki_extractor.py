@@ -8,8 +8,8 @@ import re
 class WikiExtractor:
     def __init__(self, f_name):
         try:
-            url = os.environ['CLEARDB_DATABASE_URL']
-            m = re.match('mysql://(.*):(.*)@(.*)/(.*)\?reconnect=true', url)
+            url = os.environ['JAWSDB_URL']
+            m = re.match('mysql://(.*):(.*)@(.*):3306/(.*)', url)
             arg = m.groups()
             print(arg)
             conf = {'host':arg[2], 'user':arg[0], 'password':arg[1], 'database':arg[3], 'charset':'utf8'}
@@ -79,7 +79,7 @@ class WikiExtractor:
                 SELECT
                   page_id, page_title
                 FROM
-                  page
+                  template
                 WHERE
                   page_id = {}
         """.format(page_id)
