@@ -10,6 +10,7 @@ app = Flask(__name__,
 CORS(app)
 
 template = ""
+Article.read_tfidf()
 
 @app.route('/api/template', methods=['GET'])
 def get_template():
@@ -48,5 +49,4 @@ def catch_all(path):
     return render_template("index.html")
 
 if __name__ == "__main__":
-    Article.read_tfidf()
     app.run()
