@@ -16,7 +16,6 @@ html5lib==1.0.1
 idna==2.7
 ijson==2.3
 itsdangerous==0.24
-Janome==0.3.6
 jedi==0.12.1
 Jinja2==2.10
 jsonschema==2.6.0
