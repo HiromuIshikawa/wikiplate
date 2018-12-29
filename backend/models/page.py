@@ -2,7 +2,6 @@
 from ..lib import accessor as ac
 from ..lib.wiki_extractor import WikiExtractor as wiki
 import json
-import MeCab
 # from janome.tokenizer import Tokenizer
 # from janome.analyzer import Analyzer
 # from janome.charfilter import *
@@ -132,30 +131,30 @@ class Article(Page):
         all_targets = l_1 + l_2
         self._target = all_targets
 
-    def calc_tf(self):
-        if self._target == "":
-            self.get_target()
-        else:
-            self._target = [Category(c) for c in self._target]
+    # def calc_tf(self):
+    #     if self._target == "":
+    #         self.get_target()
+    #     else:
+    #         self._target = [Category(c) for c in self._target]
 
-        candidates = [c.last_word() for c in self._target]
-        counted = collections.Counter(candidates)
-        tf = [(w[0], w[1]/len(candidates)) for w in counted.most_common()] # 頻出単語順に並べすべてをキーワードとして抽出
-        for w in tf:
-            try:
-                self.df[w[0]] = self.df[w[0]] + 1
-            except KeyError:
-                self.df[w[0]] = 1
-        self._tf = tf
+    #     candidates = [c.last_word() for c in self._target]
+    #     counted = collections.Counter(candidates)
+    #     tf = [(w[0], w[1]/len(candidates)) for w in counted.most_common()] # 頻出単語順に並べすべてをキーワードとして抽出
+    #     for w in tf:
+    #         try:
+    #             self.df[w[0]] = self.df[w[0]] + 1
+    #         except KeyError:
+    #             self.df[w[0]] = 1
+    #     self._tf = tf
 
-    def extract_key(self, pages_n):
-        tfidf = {}
-        for w in self._tf:
-            tfidf[w[0]] = self.__tfidf(w[1], self.df[w[0]], pages_n)
+    # def extract_key(self, pages_n):
+    #     tfidf = {}
+    #     for w in self._tf:
+    #         tfidf[w[0]] = self.__tfidf(w[1], self.df[w[0]], pages_n)
 
-        sorted_tfidf = sorted(tfidf.items(), key=lambda x: -x[1])
-        self._tfidf = tfidf
-        self._keywords = [w[0] for w in sorted_tfidf]
+    #     sorted_tfidf = sorted(tfidf.items(), key=lambda x: -x[1])
+    #     self._tfidf = tfidf
+    #     self._keywords = [w[0] for w in sorted_tfidf]
 
     def filtered_keys(self):
         keys = []
@@ -165,8 +164,8 @@ class Article(Page):
 
         return keys
 
-    def __tfidf(self, TF, DF, N):
-        return TF * log( N / DF )
+    # def __tfidf(self, TF, DF, N):
+    #     return TF * log( N / DF )
 
     def save(self):
         self.ext.insert_article(self._page_id, self._title, self._infobox, self._keywords)
@@ -220,41 +219,41 @@ class Category(Page):
     def __init__(self, params):
         super().__init__(params)
 
-    def last_word(self):
-        return self.__word_l()
+    # def last_word(self):
+    #     return self.__word_l()
 
-    def __word_l(self):
-        """
-        Return tokens of category
-        """
-        # janome version
-        # a = Analyzer(token_filters=[CompoundNounFilter(),POSKeepFilter(['名詞'])])
-        # words = [token.surface for token in a.analyze(self._title)]
-        # if words:
-        #     return words[-1]
-        # else:
-        #     return ""
-        m = MeCab.Tagger('mecabrc')
-        m.parseToNode('')
+    # def __word_l(self):
+    #     """
+    #     Return tokens of category
+    #     """
+    #     # janome version
+    #     # a = Analyzer(token_filters=[CompoundNounFilter(),POSKeepFilter(['名詞'])])
+    #     # words = [token.surface for token in a.analyze(self._title)]
+    #     # if words:
+    #     #     return words[-1]
+    #     # else:
+    #     #     return ""
+    #     m = MeCab.Tagger('mecabrc')
+    #     m.parseToNode('')
 
-        words =  [token for token in self.__tokenize(m)]
-        if words:
-            return words[-1]
-        else:
-            return ""
+    #     words =  [token for token in self.__tokenize(m)]
+    #     if words:
+    #         return words[-1]
+    #     else:
+    #         return ""
 
-    # private method
-    def __tokenize(self, m):
-        node = m.parseToNode(self._title)
-        compound = ""
-        while node:
-            if node.feature.split(',')[0] == '名詞':
-                compound += node.surface.lower()
-            else:
-                if compound != "":
-                    yield compound
-                    compound = ""
-            node = node.next
+    # # private method
+    # def __tokenize(self, m):
+    #     node = m.parseToNode(self._title)
+    #     compound = ""
+    #     while node:
+    #         if node.feature.split(',')[0] == '名詞':
+    #             compound += node.surface.lower()
+    #         else:
+    #             if compound != "":
+    #                 yield compound
+    #                 compound = ""
+    #         node = node.next
 
 
 class Infobox(Page):
