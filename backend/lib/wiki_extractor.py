@@ -9,7 +9,7 @@ class WikiExtractor:
     def __init__(self, f_name):
         try:
             url = os.environ['CLEARDB_DATABASE_URL']
-            m = re.match('mysql://(.*):(.*)@(.*)/(.*)?reconnect=true', url)
+            m = re.match('mysql://(.*):(.*)@(.*)/(.*)\?reconnect=true', url)
             arg = m.groups()
             print(arg)
             conf = {'host':arg[2], 'user':arg[0], 'password':arg[1], 'database':arg[3], 'charset':'utf8'}
