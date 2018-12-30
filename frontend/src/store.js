@@ -1,5 +1,5 @@
 import axios from 'axios'
-const apiEndpoint = 'http://localhost:5000/api'
+const apiEndpoint = 'https://wikiplate.herokuapp.com/api'
 
 const state = {
   template: {
