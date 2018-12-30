@@ -130,6 +130,25 @@ class WikiExtractor:
             print(sql)
             self.conn.rollback()
 
+    def add_selected_keys(self, page_id, keys):
+        """
+        Add data into keywords column
+        """
+
+        sql = """
+                UPDATE article SET selected_keys='{}'
+                WHERE page_id={};
+        """.format(str(keys).replace("'",'"').replace('""",', ''), page_id)
+
+        cur = self.conn.cursor()
+
+        try:
+            cur.execute(sql)
+            self.conn.commit()
+        except:
+            print(sql)
+            self.conn.rollback()
+
     def articles(self):
 
         sql = """
@@ -155,7 +174,7 @@ class WikiExtractor:
 
     def articles_from_keys(self, keys):
 
-        query = "JSON_CONTAINS(keywords, *{}*)".format(keys)
+        query = "JSON_CONTAINS(selected_keys, *{}*)".format(keys)
         query = query.replace("'",'"').replace("*","'")
         sql = """
                 SELECT * FROM article

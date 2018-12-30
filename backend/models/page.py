@@ -89,14 +89,14 @@ class Article(Page):
 
     def __init__(self, params):
         super().__init__(params)
-        try:
-            tf = params["tf"]
-        except KeyError:
-            tf = {}
-        try:
-            tfidf = params["tfidf"]
-        except KeyError:
-            tfidf = self.tfidf_all[self.tfidf_all["page_id"] == self.page_id].iloc[0].tiidf
+        # try:
+        #     tf = params["tf"]
+        # except KeyError:
+        #     tf = {}
+        # try:
+        #     tfidf = params["tfidf"]
+        # except KeyError:
+        #     tfidf = self.tfidf_all[self.tfidf_all["page_id"] == self.page_id].iloc[0].tiidf
         try:
             keys = params["keywords"]
         except KeyError:
@@ -108,10 +108,10 @@ class Article(Page):
 
         self._secs = []
         self._infobox = params["infobox"]
-        self._tf = tf
-        self._tfidf = tfidf
+        # self._tf = tf
+        # self._tfidf = tfidf
         self._keywords = keys
-        self._filtered = self.filtered_keys()
+        # self._filtered = self.filtered_keys()
         self._target = target
 
     def to_json(self):
@@ -183,23 +183,24 @@ class Article(Page):
 
     @classmethod
     def from_keys(cls, keys):
-        if cls.tfidf_d.empty:
-            cls.read_tfidf()
+        # if cls.tfidf_d.empty:
+        #     cls.read_tfidf()
 
-        d = cls.tfidf_d
-        target_ids = []
+        # d = cls.tfidf_d
+        # target_ids = []
         ##### When use filtered tfidf file, use bellow code
-        target_ids = list(functools.reduce(lambda x, y: x & y, [set(d[d[0] == key].page_id.values) for key in keys]))
+        # target_ids = list(functools.reduce(lambda x, y: x & y, [set(d[d[0] == key].page_id.values) for key in keys]))
         ##### When use not filtered tfidf file by alpha(>= 0.5), use bellow code
         # for i, row in d.iterrows():
         #     if row.tiidf.keys() >= set(keys):
         #         if functools.reduce(lambda x, y: x and y, [row.tiidf[key] >= cls.alpha for key in keys]):
         #             target_ids.append(row.page_id)
-        if target_ids:
-            similars_df = cls.ext.articles_from_ids(target_ids)
-            return [cls.from_df(df) for i, df in similars_df.iterrows()]
-        else:
+        similars_df = cls.ext.articles_from_keys(keys)
+        if similars_df.empty:
             return False
+        else:
+            return [cls.from_df(df) for i, df in similars_df.iterrows()]
+
 
     @classmethod
     def read_tfidf(cls):

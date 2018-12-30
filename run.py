@@ -10,7 +10,6 @@ app = Flask(__name__,
 CORS(app)
 
 template = ""
-Article.read_tfidf()
 
 @app.route('/api/template', methods=['GET'])
 def get_template():
