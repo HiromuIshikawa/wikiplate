@@ -176,6 +176,7 @@ class WikiExtractor:
 
         query = "JSON_CONTAINS(selected_keys, *{}*)".format(keys)
         query = query.replace("'",'"').replace("*","'")
+        print(query)
         sql = """
                 SELECT * FROM article
                 WHERE {};
