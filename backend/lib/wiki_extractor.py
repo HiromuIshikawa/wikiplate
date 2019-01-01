@@ -79,7 +79,7 @@ class WikiExtractor:
                 SELECT
                   page_id, page_title
                 FROM
-                  template
+                  page
                 WHERE
                   page_id = {}
         """.format(page_id)
