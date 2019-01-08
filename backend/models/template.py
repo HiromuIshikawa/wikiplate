@@ -16,15 +16,15 @@ class Template:
     keys = ac.reader("_keys")
     secs = ac.reader("_secs")
     infobox = ac.reader("_infobox")
-    ib_candidate = ac.reader("_ib_candidate")
     similars = ac.reader("_similars")
+    ib_similars = ac.reader("_ib_similars")
 
     def __init__(self, params):
         self._keys = params["keys"]
         self._secs = []
-        self._ib_candidate = []
         self._infobox = ""
         self._similars = []
+        self._ib_similars = []
 
     # When get articles by not compound keys, use bellow code
     # def select_similar(self):
@@ -56,27 +56,36 @@ class Template:
         arg = []
         for ib in counted_infobox:
             ib_df = self.ext.page(ib[0]).iloc[0]
-            self._ib_candidate.append({'page_id': ib_df.page_id, 'title': ib_df.page_title})
+            similars = [s for s in self._similars if s.infobox == ib_df.page_id]
+            self._ib_similars.append({'page_id': ib_df.page_id, 'title': ib_df.page_title, 'similars': similars})
 
         # for (i,ib) in enumerate(self._ib_candidate):
         #     print(ib)
         #     arg = self.__get_args(ib['title'])
 
-        selected = self._ib_candidate[0]
+        selected = self._ib_similars[0]
         arg = self.__get_args(selected['title'])
         url = "https://ja.wikipedia.org/wiki/Template:" + selected['title']
         self._infobox = (Infobox({"page_id": selected['page_id'], "title": selected['title'], "arg": arg, "url": url}))
 
+    def change_infobox(self, title):
+        for ib in self._ib_similars:
+            if ib['title'] == title:
+                arg = self.__get_args(title)
+                url = "https://ja.wikipedia.org/wiki/Template:" + title
+                self._infobox = (Infobox({"page_id": ib['page_id'], "title": ib['title'], "arg": arg, "url": url}))
+
     def recommended_sections(self):
         graph = sg()
-        for a in self._similars:
+        target = [ib['similars'] for ib in self._ib_similars if ib['page_id'] == self._infobox.page_id][0]
+        for a in target:
             # print(a.title, ":", a.secs)
             graph.add_sections(a.secs)
         graph.create_djacency()
         self._secs = graph.dijkstra_path()
 
     def ib_title(self, page_id):
-        for ib in self._ib_candidate:
+        for ib in self._ib_similars:
             if page_id == ib['page_id']:
                 return ib['title']
 

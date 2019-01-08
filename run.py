@@ -35,11 +35,32 @@ def get_template():
         response['result'] = 'Not found articles matching to keywords'
     return make_response(jsonify(response))
 
+@app.route('/api/regenerate', methods=['GET'])
+def regenerate_template():
+    # URLパラメータ
+    params = request.args
+    response = {}
+    keys = []
+    global template
+
+    if 'infobox' in params:
+        ib_title = params.get('infobox')
+        template.change_infobox(ib_title)
+        template.recommended_sections()
+
+        response['result'] = 'Success'
+        response['infobox'] = template.infobox.to_dict()
+        response['sections'] = template.secs
+        response['wiki'] = template.to_wiki()
+    else:
+        response['result'] = 'Could not generate template'
+    return make_response(jsonify(response))
+
 @app.route('/api/similars', methods=['GET'])
 def get_similars():
     global template
     response = {}
-    response['similars'] = [{'title': s.title, 'infobox': template.ib_title(s.infobox), 'sections': s.secs} for s in template.similars]
+    response['similars'] = [{'ib_title': box['title'], 'similars': [{'title': s.title, 'sections': s.secs} for s in box['similars']]} for box in template.ib_similars]
     return make_response(jsonify(response))
 
 @app.route('/', defaults={'path': ''})

@@ -7,7 +7,7 @@
         <b-col v-if="sharedState.loading" class="loading-col" cols="12" sm = "10">
           <sync-loader class="loader" :loading="sharedState.loading" :color="color" :size="size" :margin="margin"></sync-loader>
         </b-col>
-        <b-col v-else class="main-content-col" cols="12" sm="10"><router-view/></b-col>
+        <b-col v-else class="main-content-col" cols="12" sm="10"><router-view @regenerate="regenerate" /></b-col>
       </b-row>
     </b-container>
   </div>
@@ -39,6 +39,9 @@ export default {
   methods: {
     create (keywords) {
       store.actions.getTemplate(keywords)
+    },
+    regenerate (infobox) {
+      store.actions.regenerateTemplate(infobox)
     }
   }
 }
@@ -78,6 +81,7 @@ export default {
   div.main-content-col {
     padding-top: 5px;
     height: 100%;
+    overflow: auto;
     box-shadow: 0px 0px 5px #444;
     z-index: 1;
   }

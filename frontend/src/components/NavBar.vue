@@ -28,6 +28,7 @@ export default {
   methods: {
     create () {
       this.$emit('create', this.privateState.keywords)
+      this.$router.push({name: 'Template'})
     }
   }
 }

@@ -1,19 +1,35 @@
 <template>
   <div class="similars">
     <h1>類似記事</h1>
-    <b-table id="similars-table" :items="sharedSimilars" :fields="fields" :per-page="perPage" :current-page="currentPage">
-      <template slot="title" slot-scope="data">
+    <b-table id="similars-table" :items="sharedSimilars" :fields="ibFields">
+      <template slot="ib_title" slot-scope="data">
         <a :href="'https://ja.wikipedia.org/wiki/' + data.value" target="_blank">{{data.value}}</a>
       </template>
-      <template slot="sections" slot-scope="data">
-        {{data.value.join(', ')}}
+      <template slot="similars" slot-scope="data">
+        {{data.value.length}}ページ
+      </template>
+      <template slot="show_similars" slot-scope="row">
+        <b-button size="sm" @click.stop="row.toggleDetails" class="mr-2">
+          類似記事を{{ row.detailsShowing ? '隠す':'表示'}}
+        </b-button>
+        <b-button size="sm" @click="regenerate(row.item.ib_title)" class="mr-2">
+          記事テンプレート再生成
+        </b-button>
+      </template>
+      <template slot="row-details" slot-scope="row">
+        <b-table id="similars-table" :items="row.item.similars" :fields="similarsFields" :outlined="outlined">
+          <template slot="title" slot-scope="data">
+            <a :href="'https://ja.wikipedia.org/wiki/' + data.value" target="_blank">{{data.value}}</a>
+          </template>
+          <template slot="sections" slot-scope="data">
+            {{data.value.join(', ')}}
+          </template>
+        </b-table>
       </template>
       <template slot="table-caption">
-        {{ sharedSimilars.length }} 件の類似記事が抽出されました．
+        {{ sharedSimilars.length }} 種類の Infobox が存在しています．
       </template>
     </b-table>
-    <b-pagination class="pagination" align="center" size="sm" :total-rows="sharedSimilars.length" :per-page="perPage" v-model="currentPage">
-    </b-pagination>
   </div>
 </template>
 
@@ -24,13 +40,22 @@ export default {
   data () {
     return {
       sharedSimilars: store.state.similars,
-      currentPage: 1,
-      perPage: 6,
-      fields: [
-        {key: 'title', label: '記事名', sortable: true},
-        {key: 'infobox', label: 'Infobox', sortable: true},
-        {key: 'sections', label: '章構成', sortable: true}
+      outlined: true,
+      ibFields: [
+        {key: 'ib_title', label: 'Infobox'},
+        {key: 'similars', label: '類似記事数'},
+        {key: 'show_similars', label: ''}
+      ],
+      similarsFields: [
+        {key: 'title', label: '記事名'},
+        {key: 'sections', label: '章構成'}
       ]
+    }
+  },
+  methods: {
+    regenerate (infobox) {
+      this.$emit('regenerate', infobox)
+      this.$router.push({name: 'Template'})
     }
   }
 }
