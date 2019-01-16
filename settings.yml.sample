@@ -1,5 +1,5 @@
-host: localhost
-user: root
+host: XXXXXXX
+user: XXXXXXX
 password: XXXXXXXX
-database: database_name
+database: XXXXXXXX
 charset: utf8

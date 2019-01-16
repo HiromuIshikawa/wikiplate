@@ -1,0 +1,74 @@
+* Wikiplate
+UDC2018 応募作品
+Wikipedia Town で作成する記事のテンプレートを生成する Web アプリケーションです．
+
+作動中のアプリケーション URL: https://wikiplate.herokuapp.com/
+
+** 環境
+ - python: 3.5.2
+ - npm: 8.12.0
+
+** セットアップ
+*** サーバのセットアップ
+1. clone
+   #+BEGIN_SRC
+   git clone https://gitlab.datacradle.jp/dc-students/wiki-link-map.git
+   cd wikiplate
+   #+END_SRC
+2. パッケージのインストール
+   #+BEGIN_SRC
+   pip install -r requirements.txt
+   #+END_SRC
+
+*** フロントのセットアップ
+1. パッケージのインストール
+   #+BEGIN_SRC
+   npm install
+   #+END_SRC
+
+*** データベースのセットアップ
+1. MySQL に任意のデータベースを作成
+2. データのリストア
+   リストアするデータ
+   - db/dump/ 以下の `article.sql`
+   - wikipedia の公式ダンプデータ `jawiki-YYYYMMDD-page.sql`
+   以下，リストア例：
+   #+BEGIN_SRC
+   mysql -u USERNAME DATABASENAME < article.sql
+   #+END_SRC
+3. 作成したデータベース情報を設定ファイルに記載
+   #+BEGIN_SRC
+   cp settings.yml.sample settings.yml
+   emacs settings.yml
+   #+END_SRC
+   上記の実行で以下ようなファイルが開く
+   #+BEGIN_SRC
+   host: XXXXXXX
+   user: XXXXXXX
+   password: XXXXXXXX
+   database: XXXXXXXX
+   charset: utf8
+   #+END_SRC
+   上記ファイルの 'XXXXXXXX' を使用する MySQL データベースの情報に編集する．
+** 起動
+1. Flask アプリの起動
+   #+BEGIN_SRC
+   python run.py
+   #+END_SRC
+
+2. frontend 以下を改変した場合
+   #+BEGIN_SRC
+   cd frontend
+   npm run build
+   #+END_SRC
+
+   を実行してから，Flask アプリを起動する．
+   上記は，localhost:5000 で立ち上がる．
+   フロントの変更を開発用サーバで確認したい場合は，
+
+   #+BEGIN_SRC
+   cd frontend
+   npm start
+   #+END_SRC
+
+   で，localhost:8081 上に立ち上がる．
