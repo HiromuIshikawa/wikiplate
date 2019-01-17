@@ -41,13 +41,15 @@ Wikipedia Town で作成する記事のテンプレートを生成する Web ア
 1. MySQL に任意のデータベースを作成
 
 2. データのリストア
-リストアするデータ
-   - db/dump/ 以下の `article.sql.gz` を解凍したファイル
-   - wikipedia の公式ダンプデータ `jawiki-YYYYMMDD-page.sql`
-    以下，リストア例：
+   - `article.sql.gz`
+   - `jawiki-20180601-page.sql.gz`
+
+   を [Dropbox](https://www.dropbox.com/sh/qyg3rv7v0m6uyy4/AADpvSWwQHa1NDEQOcGS1RYNa?dl=0) からダウンロードして以下を実行
       ```
-      gzip -d db/dump/article.sql.gz
-      mysql -u USERNAME DATABASENAME \< db/dump/article.sql
+      gzip -d article.sql.gz
+      mysql -u USERNAME DATABASENAME < article.sql
+      gzip -d jawiki-20180601-page.sql.gz
+      mysql -u USERNAME DATABASENAME < jawiki-20180601-page.sql
       ```
 3. 作成したデータベース情報を設定ファイルに記載
     ```
