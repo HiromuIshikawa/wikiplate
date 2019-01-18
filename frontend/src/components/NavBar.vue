@@ -1,7 +1,7 @@
 <template>
   <b-navbar toggleable="md" type="dark" variant="info">
       <b-navbar-toggle target="nav_collapse"></b-navbar-toggle>
-      <router-link :to="{name:'Template'}">
+      <router-link :to="{name:'About'}">
         <b-navbar-brand tag="h1">Wikiplate</b-navbar-brand>
       </router-link>
   <b-collapse is-nav id="nav_collapse">
