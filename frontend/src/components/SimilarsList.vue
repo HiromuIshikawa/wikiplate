@@ -3,7 +3,7 @@
     <h1>類似記事</h1>
     <b-table id="similars-table" :items="sharedSimilars" :fields="ibFields">
       <template slot="ib_title" slot-scope="data">
-        <a :href="'https://ja.wikipedia.org/wiki/' + data.value" target="_blank">{{data.value}}</a>
+        <a :href="'https://ja.wikipedia.org/wiki/Template:' + data.value" target="_blank">{{data.value}}</a>
       </template>
       <template slot="similars" slot-scope="data">
         {{data.value.length}}ページ
