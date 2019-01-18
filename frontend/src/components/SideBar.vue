@@ -2,6 +2,7 @@
   <div class="sidebar">
     <router-link class= "sidebar-item" tag="div" :to="{ name: 'Template'}" exact>記事テンプレート</router-link>
     <router-link class= "sidebar-item" tag="div" :to="{ name: 'Similars'}">類似記事</router-link>
+    <router-link class= "sidebar-item" tag="div" :to="{ name: 'About'}">About Wikiplate</router-link>
   </div>
 </template>
 

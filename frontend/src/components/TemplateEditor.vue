@@ -13,6 +13,7 @@
       <b-col class="wiki-template" cols="12" sm="8">
         <p><b>wikiテンプレート:</b></p>
         <textarea v-model="sharedTemplate.wiki" name="wiki"></textarea>
+        <p>上記を Wikipedia の記事作成画面にそのまま貼り付けて利用してください．</p>
       </b-col>
     </b-row>
   </div>

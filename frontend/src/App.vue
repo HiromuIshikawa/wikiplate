@@ -6,6 +6,7 @@
         <b-col class="sidebar-col" cols="12" sm="2"><side-bar/></b-col>
         <b-col v-if="sharedState.loading" class="loading-col" cols="12" sm = "10">
           <sync-loader class="loader" :loading="sharedState.loading" :color="color" :size="size" :margin="margin"></sync-loader>
+          <p class="loader-text">記事テンプレートを生成しています</p>
         </b-col>
         <b-col v-else class="main-content-col" cols="12" sm="10"><router-view @regenerate="regenerate" /></b-col>
       </b-row>
@@ -84,6 +85,8 @@ export default {
     overflow: auto;
     box-shadow: 0px 0px 5px #444;
     z-index: 1;
+    color: #555;
+    font-size: 17px;
   }
   div.loading-col {
     height: 100%;
@@ -99,6 +102,16 @@ export default {
   .loader {
     position: absolute;
     top: 50%;
+    left: 50%;
+    -webkit-transform: translateY(-50%) translateX(-50%);
+    transform: translateY(-50%) translateX(-50%);
+  }
+  .loader-text{
+    text-align: center;
+    font-size: 25px;
+    color: #5bc0de;
+    position: absolute;
+    top: 60%;
     left: 50%;
     -webkit-transform: translateY(-50%) translateX(-50%);
     transform: translateY(-50%) translateX(-50%);
