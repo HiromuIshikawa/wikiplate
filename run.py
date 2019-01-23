@@ -3,6 +3,7 @@ from backend.models.template import Template
 from backend.models.page import Article
 from flask import Flask, render_template, request, jsonify, make_response
 from flask_cors import CORS, cross_origin
+from itertools import combinations
 
 app = Flask(__name__,
             static_folder = "./dist/static",
@@ -22,8 +23,31 @@ def get_template():
     if 'keywords' in params:
         keys = params.get('keywords').split(":")
         print(keys)
-    template = Template({"keys":keys})
-    if template.select_similar():
+        for key_num in reversed(range(len(keys) + 1)[1:]):
+            pairs = []
+            selected = ""
+            similars_len = 0
+            print("キーワード数 {} の組合せ".format(key_num))
+            for c in combinations(keys, key_num):
+                pairs.append(c)
+            for p in pairs:
+                print(p)
+                template = Template({"keys":list(p)})
+                if template.select_similar():
+                    if len(template.similars) > similars_len:
+                        similars_len = len(template.similars)
+                        selected = template
+                        selected_keys = list(p)
+            if similars_len > 0:
+                print("found simialrs!!")
+                break
+
+        if selected != "":
+            template = selected
+        else:
+            template = ""
+
+    if template != "":
         template.recommended_infobox()
         template.recommended_sections()
 
