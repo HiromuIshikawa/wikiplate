@@ -7,6 +7,8 @@
         <b-col v-if="sharedState.loading" class="loading-col" cols="12" sm = "10">
           <sync-loader class="loader" :loading="sharedState.loading" :color="color" :size="size" :margin="margin"></sync-loader>
           <p class="loader-text">記事テンプレートを生成しています</p>
+          <p class="rate">{{ rate }} %</p>
+          <b-progress class="mb-2 treat-bar" :value="sharedState.treatPairs" :max="sharedState.allPairs" variant="info" animated></b-progress>
         </b-col>
         <b-col v-else class="main-content-col" cols="12" sm="10"><router-view @regenerate="regenerate" /></b-col>
       </b-row>
@@ -35,6 +37,11 @@ export default {
       size: '20px',
       margin: '10px',
       radius: '2px'
+    }
+  },
+  computed: {
+    rate: function () {
+      return Math.round(this.sharedState.treatPairs / this.sharedState.allPairs * 100)
     }
   },
   methods: {
@@ -101,18 +108,38 @@ export default {
   }
   .loader {
     position: absolute;
-    top: 50%;
+    top: 63%;
     left: 50%;
     -webkit-transform: translateY(-50%) translateX(-50%);
     transform: translateY(-50%) translateX(-50%);
   }
-  .loader-text{
+  .loader-text {
     text-align: center;
     font-size: 25px;
     color: #5bc0de;
     position: absolute;
-    top: 60%;
+    top: 40%;
     left: 50%;
+    -webkit-transform: translateY(-50%) translateX(-50%);
+    transform: translateY(-50%) translateX(-50%);
+  }
+  .rate {
+    text-align: center;
+    font-size: 18px;
+    color: #5bc0de;
+    position: absolute;
+    top: 54%;
+    left: 50%;
+    -webkit-transform: translateY(-50%) translateX(-50%);
+    transform: translateY(-50%) translateX(-50%);
+  }
+  .treat-bar {
+    position: absolute;
+    font-size: 20px;
+    top: 50%;
+    left: 50%;
+    width: 80%;
+    height: 3%;
     -webkit-transform: translateY(-50%) translateX(-50%);
     transform: translateY(-50%) translateX(-50%);
   }

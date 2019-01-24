@@ -11,52 +11,70 @@ app = Flask(__name__,
 CORS(app)
 
 template = ""
+pairs = []
+treat = 0
+similars_len = 0
 
-@app.route('/api/template', methods=['GET'])
-def get_template():
+@app.route('/api/pairs', methods=['GET'])
+def get_pairs():
     # URLパラメータ
     params = request.args
     response = {}
     keys = []
-    global template
+    global pairs
+    global treat
+    global similars_len
+    pairs = []
+    treat = 0
+    similars_len = 0
+
 
     if 'keywords' in params:
         keys = params.get('keywords').split(":")
         print(keys)
         for key_num in reversed(range(len(keys) + 1)[1:]):
-            pairs = []
-            selected = ""
-            similars_len = 0
             print("キーワード数 {} の組合せ".format(key_num))
             for c in combinations(keys, key_num):
-                pairs.append(c)
-            for p in pairs:
-                print(p)
-                template = Template({"keys":list(p)})
-                if template.select_similar():
-                    if len(template.similars) > similars_len:
-                        similars_len = len(template.similars)
-                        selected = template
-                        selected_keys = list(p)
-            if similars_len > 0:
-                print("found simialrs!!")
-                break
-
-        if selected != "":
-            template = selected
-        else:
-            template = ""
-
-    if template != "":
-        template.recommended_infobox()
-        template.recommended_sections()
+                pairs.append(list(c))
 
         response['result'] = 'Success'
-        response['infobox'] = template.infobox.to_dict()
-        response['sections'] = template.secs
-        response['wiki'] = template.to_wiki()
+        response['pairs'] = len(pairs)
     else:
+        response['result'] = 'Failed'
+    return make_response(jsonify(response))
+
+@app.route('/api/template', methods=['GET'])
+def get_template():
+    # URLパラメータ
+    response = {}
+    global template
+    global pairs
+    global treat
+    global similars_len
+
+    try:
+        pair = pairs.pop(0)
+        treat += 1
+        template_tmp = Template({"keys":pair})
+        if template_tmp.select_similar():
+            if len(template_tmp.similars) > similars_len:
+                similars_len = len(template_tmp.similars)
+                template = template_tmp
+
+        if len(pair) > len(pairs[0]) and similars_len > 0:
+            template.recommended_infobox()
+            template.recommended_sections()
+            response['result'] = 'Success'
+            response['infobox'] = template.infobox.to_dict()
+            response['sections'] = template.secs
+            response['wiki'] = template.to_wiki()
+            pairs = []
+        else:
+            response['result'] = 'Generating now'
+            response['treat'] = treat
+    except:
         response['result'] = 'Not found articles matching to keywords'
+
     return make_response(jsonify(response))
 
 @app.route('/api/regenerate', methods=['GET'])
