@@ -21,6 +21,13 @@ class WikiExtractor:
 
         mysql = MySQL(conf)
         self.conn = mysql.connection()
+        if self.conn.is_connected() == False:
+            print("Connection is down. Start reconnection...")
+            self.conn.ping(reconnect=True)
+            if self.conn.is_connected():
+                print("Success reconnect")
+            else:
+                print("Failed reconnect")
 
     def categories(self, page_id):
         """

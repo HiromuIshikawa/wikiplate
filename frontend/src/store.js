@@ -18,7 +18,8 @@ const state = {
   generating: false,
   allPairs: 1,
   treatPairs: 0,
-  message: ''
+  message: '',
+  session: 0
 }
 
 const actions = {
@@ -33,14 +34,23 @@ const actions = {
     }).catch(() => { console.log('pairs error') })
     if (resPairs.data.result === 'Success') {
       state.allPairs = resPairs.data.pairs + 1
+      state.session = resPairs.data.session
       state.treatPairs = 1
       state.generating = true
     }
     while (state.generating) {
-      const resTemplate = await axios.get(apiEndpoint + '/template').catch(() => { console.log('template error') })
+      const resTemplate = await axios.get(apiEndpoint + '/template', {
+        params: {
+          session: state.session
+        }
+      }).catch(() => { console.log('template error') })
       if (resTemplate.data.result === 'Success') {
         state.message = ''
-        const resSimilars = await axios.get(apiEndpoint + '/similars').catch(() => { console.log('similars error') })
+        const resSimilars = await axios.get(apiEndpoint + '/similars', {
+          params: {
+            session: state.session
+          }
+        }).catch(() => { console.log('similars error') })
         const template = resTemplate.data
         const similars = resSimilars.data.similars
         for (let i = 0, len = similars.length; i < len; ++i) {
@@ -65,6 +75,7 @@ const actions = {
             url: ''
           },
           sections: [],
+          keywords: [],
           wiki: ''
         }
         state.similars = []
@@ -80,7 +91,8 @@ const actions = {
     state.loading = true
     const resTemplate = await axios.get(apiEndpoint + '/regenerate', {
       params: {
-        infobox: infobox
+        infobox: infobox,
+        session: state.session
       }
     }).catch(() => { console.log('template error') })
     if (resTemplate.data.result === 'Success') {
@@ -103,6 +115,7 @@ const actions = {
           url: ''
         },
         sections: [],
+        keywords: [],
         wiki: ''
       }
     }
