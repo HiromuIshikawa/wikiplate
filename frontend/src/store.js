@@ -10,6 +10,7 @@ const state = {
       url: ''
     },
     sections: [],
+    keywords: [],
     wiki: ''
   },
   similars: [],

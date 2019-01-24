@@ -14,6 +14,7 @@ template = ""
 pairs = []
 treat = 0
 similars_len = 0
+selected_pair = ""
 
 @app.route('/api/pairs', methods=['GET'])
 def get_pairs():
@@ -51,6 +52,7 @@ def get_template():
     global pairs
     global treat
     global similars_len
+    global selected_pair
 
     try:
         pair = pairs.pop(0)
@@ -60,6 +62,7 @@ def get_template():
             if len(template_tmp.similars) > similars_len:
                 similars_len = len(template_tmp.similars)
                 template = template_tmp
+                selected_pair = pair
 
         if len(pair) > len(pairs[0]) and similars_len > 0:
             template.recommended_infobox()
@@ -68,6 +71,7 @@ def get_template():
             response['infobox'] = template.infobox.to_dict()
             response['sections'] = template.secs
             response['wiki'] = template.to_wiki()
+            response['keywords'] = selected_pair
             pairs = []
         else:
             response['result'] = 'Generating now'
@@ -84,6 +88,7 @@ def regenerate_template():
     response = {}
     keys = []
     global template
+    global selected_pair
 
     if 'infobox' in params:
         ib_title = params.get('infobox')
@@ -94,6 +99,7 @@ def regenerate_template():
         response['infobox'] = template.infobox.to_dict()
         response['sections'] = template.secs
         response['wiki'] = template.to_wiki()
+        response['keywords'] = selected_pair
     else:
         response['result'] = 'Could not generate template'
     return make_response(jsonify(response))
