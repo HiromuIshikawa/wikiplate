@@ -28,8 +28,10 @@ export default {
   .sidebar-item:hover {
     background-color: rgb(91, 91, 91);
   }
-
+  .sidebar-item:hover.router-link-active {
+    background-color: rgb(211, 155, 70);
+  }
   .router-link-active {
-    background-color: rgb(91,91,91);
+    background-color: rgb(211, 155, 70);
   }
 </style>
