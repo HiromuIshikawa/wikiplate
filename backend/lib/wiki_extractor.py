@@ -91,6 +91,13 @@ class WikiExtractor:
                   page_id = {}
         """.format(page_id)
 
+        if self.conn.is_connected() == False:
+            print("Connection is down. Start reconnection...")
+            self.conn.ping(reconnect=True)
+            if self.conn.is_connected():
+                print("Success reconnect")
+            else:
+                print("Failed reconnect")
         df_read = pd.read_sql(sql, self.conn)
         decode = lambda x: x.decode()
         df_read["page_title"] = df_read["page_title"].map(decode)
@@ -188,7 +195,13 @@ class WikiExtractor:
                 SELECT * FROM article
                 WHERE {};
         """.format(query)
-
+        if self.conn.is_connected() == False:
+            print("Connection is down. Start reconnection...")
+            self.conn.ping(reconnect=True)
+            if self.conn.is_connected():
+                print("Success reconnect")
+            else:
+                print("Failed reconnect")
         df_read = pd.read_sql(sql, self.conn)
 
         return df_read
