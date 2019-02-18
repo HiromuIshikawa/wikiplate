@@ -19,7 +19,7 @@ Wikipedia Town で作成する記事のテンプレートを生成する Web ア
 1. clone
 
     ```
-    git clone https://gitlab.datacradle.jp/dc-students/wiki-link-map.git
+    git clone https://github.com/HiromuIshikawa/wikiplate.git
     cd wikiplate
     ```
 
